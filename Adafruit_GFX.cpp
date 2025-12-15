@@ -410,6 +410,38 @@ void Adafruit_GFX::drawEllipse(int16_t x1, int16_t y1, int16_t x2, int16_t y2, i
     endWrite();
 }
 
+// Draw a Heart (优雅轮廓版)
+void Adafruit_GFX::drawHeart(int16_t x0, int16_t y0, int16_t size, uint16_t color) {
+    if (size <= 0) return;
+    
+    startWrite();
+    
+    // 控制爱心形状的参数
+    float widthFactor = 1.0;   // 宽度因子
+    float heightFactor = 1.8;  // 高度因子（大于1表示拉长）
+    
+    // 预计算步长，提高效率
+    float step = 0.05;
+    
+    // 绘制爱心轮廓（参数方程）
+    for (float t = 0; t <= 2 * 3.14159; t += step) {
+        // 拉长的爱心参数方程
+        float x = widthFactor * 16 * pow(sin(t), 3);
+        float y = heightFactor * (13 * cos(t) - 5 * cos(2*t) - 2 * cos(3*t) - cos(4*t));
+        
+        // 缩放和调整位置
+        int16_t px = (int16_t)(x0 + x / 16 * size);
+        int16_t py = (int16_t)(y0 - y / 16 * size / 2);  // 注意：y坐标取负
+        
+        // 确保在屏幕范围内
+        if (px >= 0 && px < _width && py >= 0 && py < _height) {
+            writePixel(px, py, color);
+        }
+    }
+    
+    endWrite();
+}
+
 
 // Draw a triangle
 void Adafruit_GFX::drawTriangle(int16_t x0, int16_t y0,
