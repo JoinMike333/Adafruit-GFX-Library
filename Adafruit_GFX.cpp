@@ -442,6 +442,32 @@ void Adafruit_GFX::drawHeart(int16_t x0, int16_t y0, int16_t size, uint16_t colo
     endWrite();
 }
 
+void Adafruit_GFX::drawSun(int16_t x0, int16_t y0, int16_t radius, uint16_t color, uint8_t rays) {
+    if (radius <= 0 || rays < 3) return; // 参数校验
+
+    // 太阳主体（中心圆，半径为总半径的1/3）
+    int16_t coreRadius = radius / 3;
+    fillCircle(x0, y0, coreRadius, color);
+
+    // 绘制射线
+    startWrite();
+    float angleStep = 2 * PI / rays; // 每条射线的角度间隔
+    int16_t rayLength = radius - coreRadius; // 射线长度
+
+    for (uint8_t i = 0; i < rays; i++) {
+        float angle = i * angleStep;
+        // 射线起点（中心圆边缘）
+        int16_t x1 = x0 + cos(angle) * coreRadius;
+        int16_t y1 = y0 + sin(angle) * coreRadius;
+        // 射线终点（总半径边缘）
+        int16_t x2 = x0 + cos(angle) * radius;
+        int16_t y2 = y0 + sin(angle) * radius;
+
+        writeLine(x1, y1, x2, y2, color);
+    }
+    endWrite();
+}
+
 
 // Draw a triangle
 void Adafruit_GFX::drawTriangle(int16_t x0, int16_t y0,
